@@ -12,9 +12,6 @@ mongoose
     process.exit(1);
   });
 
-const studentRouter = require("./routes/students.js");
-const courseRouter = require("./routes/courses.js");
-
 // create the express app
 const express = require("express");
 const morgan = require("morgan");
@@ -22,8 +19,9 @@ const app = express();
 
 app.use(morgan("tiny"));
 app.use(express.json());
-app.use("/api/students", studentRouter);
-app.use("/api/courses", courseRouter);
+
+app.use("/api/courses", require("./routes/courses"));
+app.use("/api/students", require("./routes/students"));
 
 const port = process.env.port || 3030;
 app.listen(port, () => console.log(`Server listening on port ${port} ...`));
