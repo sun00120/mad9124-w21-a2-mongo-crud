@@ -1,19 +1,26 @@
 {
-  "name": "mad9124-w21-a2-mongo-crud",
+  "name": "mad9124-w22-a2-mongo-crud",
   "version": "0.1.0",
-  "description": "",
+  "description": "assignment 2 mongo crud",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
     "MAD9124",
-    "W21"
+    "W22"
   ],
-  "author": "",
+  "author": "Jiaqian Sun",
   "contributors": [
     "Robert McKenney <mckennr@algonquincollege.com>"
   ],
   "license": "ISC",
-  "private": true
+  "private": true,
+  "dependencies": {
+    "express": "^4.17.3",
+    "mongoose": "^6.2.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
 }
