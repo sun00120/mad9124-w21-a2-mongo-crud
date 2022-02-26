@@ -55,6 +55,25 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
+router.put("/:id", async (req, res) => {
+  try {
+    const { _id, ...otherAttributes } = req.body.data.attributes;
+    const student = await Student.findByIdAndUpdate(
+      req.params.id,
+      { _id: req.params.id, ...otherAttributes },
+      {
+        new: true,
+        overwrite: true,
+        runValidators: true,
+      }
+    );
+    if (!student) throw new Error("Resource not found");
+    res.json({ data: formatResponseData("students", student.toObject()) });
+  } catch (err) {
+    sendResourceNotFound(req, res);
+  }
+});
+
 /**
  * Format the response data object according to JSON:API v1.0
  * @param {string} type The resource collection name, e.g. 'students'
