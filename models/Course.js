@@ -6,7 +6,9 @@ const schema = new mongoose.Schema({
   title: { type: String, required: true, maxlength: 255 },
   description: { type: String, required: false, maxlength: 2048 },
   url: { type: String, required: false, maxlength: 512 },
-  students: [{ type: mongoose.Schema.Types.ObjectId, ref: "Student" }],
+  students: [
+    { type: mongoose.Schema.Types.ObjectId, required: false, ref: "Student" },
+  ],
 });
 
 const Model = mongoose.model("Course", schema);
