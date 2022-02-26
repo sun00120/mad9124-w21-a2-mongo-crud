@@ -23,9 +23,21 @@ router.post("/", async (req, res) => {
     .json({ data: formatResponseData("courses", newCourse.toObject()) });
 });
 
+router.get("/:id", async (req, res) => {
+  try {
+    const course = await Course.findById(req.params.id);
+    if (!course) {
+      throw new Error("Resource not found");
+    }
+    res.json({ data: formatResponseData("courses", course.toObject()) });
+  } catch (err) {
+    sendResourceNotFound(req, res);
+  }
+});
+
 /**
  * Format the response data object according to JSON:API v1.0
- * @param {string} type The resource collection name, e.g. 'cars'
+ * @param {string} type The resource collection name, e.g. 'courses'
  * @param {Object} resource An instance object from that collection
  * @returns
  */
@@ -33,6 +45,18 @@ router.post("/", async (req, res) => {
 function formatResponseData(type, resource) {
   const { _id, ...attributes } = resource;
   return { type, id: _id, attributes };
+}
+
+function sendResourceNotFound(req, res) {
+  res.status(404).send({
+    errors: [
+      {
+        status: "404",
+        title: "Resource does not exist",
+        description: `We could not find a course with id: ${req.params.id}`,
+      },
+    ],
+  });
 }
 
 module.exports = router;
