@@ -1,11 +1,6 @@
 "use strict";
 
-// load dependencies
-const express = require("express");
-const morgan = require("morgan");
 const mongoose = require("mongoose");
-const studentRouter = require("./routes/students.js");
-const courseRouter = require("./routes/courses.js");
 
 mongoose
   .connect("mongodb://localhost:27017/mad9124", {
@@ -17,7 +12,12 @@ mongoose
     process.exit(1);
   });
 
+const studentRouter = require("./routes/students.js");
+const courseRouter = require("./routes/courses.js");
+
 // create the express app
+const express = require("express");
+const morgan = require("morgan");
 const app = express();
 
 app.use(morgan("tiny"));
