@@ -74,6 +74,16 @@ router.put("/:id", async (req, res) => {
   }
 });
 
+router.delete("/:id", async (req, res) => {
+  try {
+    const course = await Course.findByIdAndRemove(req.params.id);
+    if (!course) throw new Error("Resource not found");
+    res.json({ data: formatResponseData("courses", course.toObject()) });
+  } catch (err) {
+    sendResourceNotFound(req, res);
+  }
+});
+
 /**
  * Format the response data object according to JSON:API v1.0
  * @param {string} type The resource collection name, e.g. 'courses'
