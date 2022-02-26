@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Student = require("./Student.js");
 
 const schema = new mongoose.Schema({
   code: { type: String, required: true, maxlength: 16 },

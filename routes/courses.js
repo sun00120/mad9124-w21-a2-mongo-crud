@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
 
 router.get("/:id", async (req, res) => {
   try {
-    const course = await Course.findById(req.params.id);
+    const course = await Course.findById(req.params.id).populate("students");
     if (!course) {
       throw new Error("Resource not found");
     }
