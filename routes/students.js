@@ -3,8 +3,6 @@ const Student = require("../models/Student");
 const router = express.Router();
 const sanitizeBody = require("../middleware/sanitizeBody.js");
 
-router.use("/", sanitizeBody);
-
 router.get("/", async (req, res) => {
   const students = await Student.find();
   res.json({
@@ -14,7 +12,7 @@ router.get("/", async (req, res) => {
   });
 });
 
-router.post("/", async (req, res) => {
+router.post("/", sanitizeBody, async (req, res) => {
   let attributes = req.sanitizeBody;
   delete attributes._id; // if it exists
 
@@ -38,7 +36,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", sanitizeBody, async (req, res) => {
   try {
     const { _id, ...attributes } = req.sanitizeBody;
     const student = await Student.findByIdAndUpdate(
@@ -58,7 +56,7 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", sanitizeBody, async (req, res) => {
   try {
     const { _id, ...otherAttributes } = req.sanitizeBody;
     const student = await Student.findByIdAndUpdate(

@@ -3,8 +3,6 @@ const Course = require("../models/Course");
 const sanitizeBody = require("../middleware/sanitizeBody");
 const router = express.Router();
 
-router.use("/", sanitizeBody);
-
 router.get("/", async (req, res) => {
   const courses = await Course.find();
   res.json({
@@ -14,16 +12,17 @@ router.get("/", async (req, res) => {
   });
 });
 
-router.post("/", async (req, res) => {
+router.post("/", sanitizeBody, async (req, res) => {
   let attributes = req.sanitizeBody;
-  delete attributes._id; // if it exists
+  delete attributes._id;
 
-  let newCourse = new Course(attributes);
-  await newCourse.save();
-
-  res
-    .status(201)
-    .json({ data: formatResponseData("courses", newCourse.toObject()) });
+  try {
+    const newCourse = new Course(attributes);
+    await newCourse.save();
+    res.status(201).send({ data: newCourse });
+  } catch (err) {
+    sendResourceNotFound(req, res);
+  }
 });
 
 router.get("/:id", async (req, res) => {
@@ -38,9 +37,9 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", sanitizeBody, async (req, res) => {
   try {
-    const { _id, ...attributes } = req.sanitizedBody;
+    const { _id, ...attributes } = req.sanitizeBody;
     const course = await Course.findByIdAndUpdate(
       req.params.id,
       { id: req.params.id, ...attributes },
@@ -58,7 +57,7 @@ router.patch("/:id", async (req, res) => {
   }
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", sanitizeBody, async (req, res) => {
   try {
     const { _id, ...otherAttributes } = req.sanitizeBody;
     const course = await Course.findByIdAndUpdate(
