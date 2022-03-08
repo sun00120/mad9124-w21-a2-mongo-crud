@@ -16,9 +16,11 @@ mongoose
 const express = require("express");
 const morgan = require("morgan");
 const app = express();
+const sanitizeMongo = require("express-mongo-sanitize");
 
 app.use(morgan("tiny"));
 app.use(express.json());
+app.use(sanitizeMongo());
 
 app.use("/api/courses", require("./routes/courses"));
 app.use("/api/students", require("./routes/students"));
