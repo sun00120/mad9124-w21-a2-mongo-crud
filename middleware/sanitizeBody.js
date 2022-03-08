@@ -29,6 +29,6 @@ const stripTags = (payload) => {
 module.exports = (req, res, next) => {
   const { id, _id, ...attributes } = req.body;
   const sanitizedBody = stripTags(attributes);
-  req.sanitizedBody = sanitizedBody;
+  req.body = sanitizedBody;
   next();
 };

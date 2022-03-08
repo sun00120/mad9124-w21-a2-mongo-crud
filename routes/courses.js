@@ -13,16 +13,13 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", sanitizeBody, async (req, res) => {
-  let attributes = req.sanitizeBody;
+  let attributes = req.body.data.attributes;
   delete attributes._id;
-
-  try {
-    const newCourse = new Course(attributes);
-    await newCourse.save();
-    res.status(201).send({ data: newCourse });
-  } catch (err) {
-    sendResourceNotFound(req, res);
-  }
+  let newCourse = new Course(attributes);
+  await newCourse.save();
+  res
+    .status(201)
+    .json({ data: formatResponseData("courses", newCourse.toObject()) });
 });
 
 router.get("/:id", async (req, res) => {
@@ -39,7 +36,7 @@ router.get("/:id", async (req, res) => {
 
 router.patch("/:id", sanitizeBody, async (req, res) => {
   try {
-    const { _id, ...attributes } = req.sanitizeBody;
+    const { _id, ...attributes } = req.body.data.attributes;
     const course = await Course.findByIdAndUpdate(
       req.params.id,
       { id: req.params.id, ...attributes },
@@ -59,7 +56,7 @@ router.patch("/:id", sanitizeBody, async (req, res) => {
 
 router.put("/:id", sanitizeBody, async (req, res) => {
   try {
-    const { _id, ...otherAttributes } = req.sanitizeBody;
+    const { _id, ...otherAttributes } = req.body.data.attributes;
     const course = await Course.findByIdAndUpdate(
       req.params.id,
       { _id: req.params.id, ...otherAttributes },
@@ -85,13 +82,6 @@ router.delete("/:id", async (req, res) => {
     sendResourceNotFound(req, res);
   }
 });
-
-/**
- * Format the response data object according to JSON:API v1.0
- * @param {string} type The resource collection name, e.g. 'courses'
- * @param {Object} resource An instance object from that collection
- * @returns
- */
 
 function formatResponseData(type, resource) {
   const { _id, ...attributes } = resource;

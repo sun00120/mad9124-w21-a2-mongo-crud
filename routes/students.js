@@ -1,7 +1,7 @@
 const express = require("express");
 const Student = require("../models/Student");
 const router = express.Router();
-const sanitizeBody = require("../middleware/sanitizeBody.js");
+const sanitizeBody = require("../middleware/sanitizeBody");
 
 router.get("/", async (req, res) => {
   const students = await Student.find();
@@ -13,15 +13,13 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", sanitizeBody, async (req, res) => {
-  let attributes = req.sanitizeBody;
-  delete attributes._id; // if it exists
-
+  let attributes = req.body.data.attributes;
+  delete attributes._id;
   let newStudent = new Student(attributes);
   await newStudent.save();
-
   res
     .status(201)
-    .json({ data: formatResponseData("students", newStudent.toObject()) });
+    .json({ data: formatResponseData("people", newStudent.toObject()) });
 });
 
 router.get("/:id", async (req, res) => {
@@ -38,7 +36,7 @@ router.get("/:id", async (req, res) => {
 
 router.patch("/:id", sanitizeBody, async (req, res) => {
   try {
-    const { _id, ...attributes } = req.sanitizeBody;
+    const { _id, ...attributes } = req.body.data.attributes;
     const student = await Student.findByIdAndUpdate(
       req.params.id,
       { id: req.params.id, ...attributes },
@@ -58,7 +56,7 @@ router.patch("/:id", sanitizeBody, async (req, res) => {
 
 router.put("/:id", sanitizeBody, async (req, res) => {
   try {
-    const { _id, ...otherAttributes } = req.sanitizeBody;
+    const { _id, ...otherAttributes } = req.body.data.attributes;
     const student = await Student.findByIdAndUpdate(
       req.params.id,
       { _id: req.params.id, ...otherAttributes },
@@ -84,13 +82,6 @@ router.delete("/:id", async (req, res) => {
     sendResourceNotFound(req, res);
   }
 });
-
-/**
- * Format the response data object according to JSON:API v1.0
- * @param {string} type The resource collection name, e.g. 'students'
- * @param {Object} resource An instance object from that collection
- * @returns
- */
 
 function formatResponseData(type, resource) {
   const { _id, ...attributes } = resource;
