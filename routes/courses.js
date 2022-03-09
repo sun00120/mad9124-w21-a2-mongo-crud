@@ -16,11 +16,24 @@ router.get("/", async (req, res) => {
 router.post("/", sanitizeBody, async (req, res) => {
   let attributes = req.body.data.attributes;
   delete attributes._id;
-  let newCourse = new Course(attributes);
-  await newCourse.save();
-  res
-    .status(201)
-    .json({ data: formatResponseData("courses", newCourse.toObject()) });
+
+  try {
+    let newCourse = new Course(attributes);
+    await newCourse.save();
+    res
+      .status(201)
+      .json({ data: formatResponseData("courses", newCourse.toObject()) });
+  } catch (error) {
+    res.status(500).send({
+      errors: [
+        {
+          status: "500",
+          title: "Server error",
+          description: "Problem saving document to the database.",
+        },
+      ],
+    });
+  }
 });
 
 router.get("/:id", async (req, res) => {
